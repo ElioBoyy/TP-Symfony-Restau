@@ -9,10 +9,8 @@ use Symfony\Component\Routing\Attribute\Route;
 class SearchController extends AbstractController
 {
     #[Route('/search', name: 'app_search')]
-    public function index(): Response
+    public function searchResults(): Response
     {
-        return $this->render('search/index.html.twig', [
-            'controller_name' => 'SearchController',
-        ]);
+        return $this->render('search/search.html.twig');
     }
 }

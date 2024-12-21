@@ -1,3 +1,4 @@
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@2.8.2/dist/alpine.min.js" defer></script>
 <header class="bg-white shadow-md">
     <nav class="container mx-auto px-6 py-3">
         <div class="flex items-center justify-between">
@@ -20,11 +21,11 @@
                             <a href="{{ path('app_profile') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
                             
                             {% if is_granted('ROLE_ADMIN') %}
-                                <a href="{{ path('app_admin_dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Dashboard</a>
+                                <a href="{{ path('app_admin_dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Tableau de bord</a>
                             {% elseif is_granted('ROLE_OWNER') %}
-                                <a href="{{ path('app_owner_dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Dashboard</a>
+                                <a href="{{ path('app_owner_dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Tableau de bord</a>
                             {% elseif is_granted('ROLE_USER') %}
-                                <a href="{{ path('app_user_dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Dashboard</a>
+                                <a href="{{ path('app_user_dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Tableau de bord</a>
                             {% endif %}
                         </div>
                     </div>

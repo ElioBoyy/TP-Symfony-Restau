@@ -65,7 +65,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?bool $isActive = null;
 
     #[ORM\Column]
-    private ?bool $newsletter = null;
+    private ?bool $isNewsletter = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $resetToken = null;
@@ -278,7 +278,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->isActive;
     }
 
-    public function setActive(bool $isActive): static
+    public function setIsActive(bool $isActive): static
     {
         $this->isActive = $isActive;
 
@@ -287,12 +287,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function isNewsletter(): ?bool
     {
-        return $this->newsletter;
+        return $this->isNewsletter;
     }
 
-    public function setNewsletter(bool $newsletter): static
+    public function setIsNewsletter(bool $isNewsletter): static
     {
-        $this->newsletter = $newsletter;
+        $this->isNewsletter = $isNewsletter;
 
         return $this;
     }

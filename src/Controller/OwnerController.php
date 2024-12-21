@@ -8,7 +8,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class OwnerController extends AbstractController
 {
-    #[Route('/dashboard/owner', name: 'app_owner_dashboard')]
+    #[Route('/owner/dashboard', name: 'app_owner_dashboard')]
     public function index(): Response
     {
         return $this->render('owner/dashboard.html.twig');

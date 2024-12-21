@@ -10,7 +10,7 @@ use App\Entity\User;
 
 class UserController extends AbstractController
 {
-    #[Route('/user/profile', name: 'app_user_dashboard')]
+    #[Route('/user/dashboard', name: 'app_user_dashboard')]
     public function index(): Response
     {
         if (!$this->getUser()) {

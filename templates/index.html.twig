@@ -1,0 +1,169 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil - Système de Réservation de Restaurant{% endblock %}
+
+{% block body %}
+<div class="min-h-screen">
+
+    <section class="bg-blue-600 text-white w-full">
+        <div class="container mx-auto px-4 py-16 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h1 class="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
+                    Bienvenue sur notre Système de Réservation
+                </h1>
+                <p class="mt-4 max-w-md mx-auto text-xl">
+                    Réservez facilement une table dans vos restaurants préférés ou gérez votre établissement en quelques clics.
+                </p>
+                <div class="mt-12 sm:flex sm:justify-center lg:justify-start flex flex-col w-full gap-10 items-center">
+                    <div class="rounded-md shadow sm:w-auto">
+                        <form action="{{ path('app_search') }}" method="GET" class="flex">
+                            <input type="text" name="query" placeholder="Nom du restaurant" class="px-5 py-3 border-transparent text-base font-medium rounded-l-md text-gray-900 bg-white w-80 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent" required>
+                            <button type="submit" class="flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-r-md text-white bg-blue-800 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                Rechercher
+                            </button>
+                        </form>
+                    </div>
+                    <div class="mt-3 w-72">
+                        <a href="{{ path('app_register') }}" class="flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-blue-700 bg-white hover:bg-blue-50">
+                            S'inscrire
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-12 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="lg:text-center">
+                <h2 class="text-base text-blue-600 font-semibold tracking-wide uppercase">Fonctionnalités</h2>
+                <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+                    Une meilleure façon de réserver
+                </p>
+                <p class="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
+                    Découvrez comment notre système simplifie la réservation et la gestion de restaurants.
+                </p>
+            </div>
+
+            <div class="mt-10">
+                <dl class="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10">
+                    <div class="relative">
+                        <dt>
+                            <div class="absolute flex items-center justify-center h-12 w-12 rounded-md bg-blue-500 text-white">
+                                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                            </div>
+                            <p class="ml-16 text-lg leading-6 font-medium text-gray-900">Recherche facile</p>
+                        </dt>
+                        <dd class="mt-2 ml-16 text-base text-gray-500">
+                            Trouvez rapidement le restaurant parfait en fonction de vos préférences et de votre localisation.
+                        </dd>
+                    </div>
+
+                    <div class="relative">
+                        <dt>
+                            <div class="absolute flex items-center justify-center h-12 w-12 rounded-md bg-blue-500 text-white">
+                                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                            </div>
+                            <p class="ml-16 text-lg leading-6 font-medium text-gray-900">Réservation en temps réel</p>
+                        </dt>
+                        <dd class="mt-2 ml-16 text-base text-gray-500">
+                            Réservez instantanément et recevez une confirmation immédiate pour votre table.
+                        </dd>
+                    </div>
+
+                    <div class="relative">
+                        <dt>
+                            <div class="absolute flex items-center justify-center h-12 w-12 rounded-md bg-blue-500 text-white">
+                                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                                </svg>
+                            </div>
+                            <p class="ml-16 text-lg leading-6 font-medium text-gray-900">Gestion des réservations</p>
+                        </dt>
+                        <dd class="mt-2 ml-16 text-base text-gray-500">
+                            Les propriétaires peuvent facilement gérer les réservations et optimiser leur capacité.
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-12 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-extrabold text-gray-900 text-center mb-8">
+                Choisissez votre profil
+            </h2>
+            <div class="mt-10 grid gap-10 md:grid-cols-3">
+                <div class="bg-white overflow-hidden shadow rounded-lg">
+                    <div class="px-4 py-5 sm:p-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Client</h3>
+                        <div class="mt-2 max-w-xl text-sm text-gray-500">
+                            <p>Réservez une table dans vos restaurants préférés en quelques clics.</p>
+                        </div>
+                        <div class="mt-5">
+                            <a href="{{ path('app_search') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                Rechercher un restaurant
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white overflow-hidden shadow rounded-lg">
+                    <div class="px-4 py-5 sm:p-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Propriétaire de Restaurant</h3>
+                        <div class="mt-2 max-w-xl text-sm text-gray-500">
+                            <p>Gérez vos réservations et optimisez votre établissement.</p>
+                        </div>
+                        <div class="mt-5">
+                            <a href="{{ path('app_login') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                Connectez-vous
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white overflow-hidden shadow rounded-lg">
+                    <div class="px-4 py-5 sm:p-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Administrateur</h3>
+                        <div class="mt-2 max-w-xl text-sm text-gray-500">
+                            <p>Gérez l'ensemble du système et supervisez les activités.</p>
+                        </div>
+                        <div class="mt-5">
+                            <a href="{{ path('app_admin_dashboard') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                Accéder à l'administration
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-blue-700">
+        <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8 lg:flex lg:items-center lg:justify-between">
+            <h2 class="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+                <span class="block">Prêt à commencer ?</span>
+                <span class="block text-blue-300">Inscrivez-vous gratuitement dès aujourd'hui.</span>
+            </h2>
+            <div class="mt-8 flex lg:mt-0 lg:flex-shrink-0">
+                <div class="inline-flex rounded-md shadow">
+                    <a href="{{ path('app_register') }}" class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-blue-600 bg-white hover:bg-blue-50">
+                        S'inscrire
+                    </a>
+                </div>
+                <div class="ml-3 inline-flex rounded-md shadow">
+                    <a href="{{ path('app_login') }}" class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-500 hover:bg-blue-400">
+                        Se connecter
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+

@@ -47,9 +47,9 @@ class SecurityController extends AbstractController
             $user->setCountry($request->request->get('country'));
             $user->setAddress($request->request->get('address'));
             $user->setZipCode($request->request->get('zipCode'));
-            $user->setNewsletter($request->request->get('newsletter') === 'on');
+            $user->setIsNewsletter($request->request->get('newsletter') === 'on');
             $user->setRoles(['ROLE_USER']);
-            $user->setActive(false);
+            $user->setIsActive(false);
 
             $user->setPassword($passwordHasher->hashPassword(
                 $user,
@@ -104,5 +104,11 @@ class SecurityController extends AbstractController
         }
 
         return $this->render('security/reset_password.html.twig', ['token' => $token]);
+    }
+
+    public function hashPassword(UserPasswordHasherInterface $passwordHasher, User $user, string $plainPassword): void
+    {
+        $hashedPassword = $passwordHasher->hashPassword($user, $plainPassword);
+        $user->setPassword($hashedPassword);
     }
 }

@@ -1,0 +1,13 @@
+App\Entity\User:
+  user_{1..100}:
+    email: <email()>
+    roles: ["<randomElement(['ROLE_USER', 'ROLE_OWNER'])>"]
+    password: <hashPassword('plainPassword')>
+    name: <name()>
+    phone: <numerify('06########')>
+    country: "France"
+    address: <address()>
+    zipCode: <postcode()>
+    isActive: true
+    isNewsletter: <boolean()>
+    resetToken: ~
