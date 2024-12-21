@@ -60,6 +60,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Restaurant::class, mappedBy: 'owner')]
     private Collection $ownedRestaurants;
 
+    #[ORM\Column]
+    private ?bool $isActive = null;
+
     public function __construct()
     {
         $this->reservations = new ArrayCollection();
@@ -101,8 +104,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+
+        if (empty($this->roles)) {
+            $this->roles[] = 'ROLE_USER';
+        }
 
         return array_unique($roles);
     }
@@ -257,6 +262,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $ownedRestaurant->setOwner(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isActive(): ?bool
+    {
+        return $this->isActive;
+    }
+
+    public function setActive(bool $isActive): static
+    {
+        $this->isActive = $isActive;
 
         return $this;
     }
