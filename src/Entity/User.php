@@ -33,33 +33,37 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
+    /**
+     * @var Collection<int, Reservation>
+     */
+    #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'user')]
+    private Collection $reservations;
+
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
     #[ORM\Column(length: 15)]
     private ?string $phone = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 50)]
     private ?string $country = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $address = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 20)]
     private ?string $zipCode = null;
 
     /**
      * @var Collection<int, Restaurant>
      */
     #[ORM\OneToMany(targetEntity: Restaurant::class, mappedBy: 'owner')]
-    private Collection $restaurantsOwned;
-
-    #[ORM\ManyToOne(inversedBy: 'employees')]
-    private ?Restaurant $employedIn = null;
+    private Collection $ownedRestaurants;
 
     public function __construct()
     {
-        $this->restaurantsOwned = new ArrayCollection();
+        $this->reservations = new ArrayCollection();
+        $this->ownedRestaurants = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -137,6 +141,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
+    /**
+     * @return Collection<int, Reservation>
+     */
+    public function getReservations(): Collection
+    {
+        return $this->reservations;
+    }
+
+    public function addReservation(Reservation $reservation): static
+    {
+        if (!$this->reservations->contains($reservation)) {
+            $this->reservations->add($reservation);
+            $reservation->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReservation(Reservation $reservation): static
+    {
+        if ($this->reservations->removeElement($reservation)) {
+            // set the owning side to null (unless already changed)
+            if ($reservation->getUser() === $this) {
+                $reservation->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
     public function getName(): ?string
     {
         return $this->name;
@@ -200,41 +234,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @return Collection<int, Restaurant>
      */
-    public function getRestaurantsOwned(): Collection
+    public function getOwnedRestaurants(): Collection
     {
-        return $this->restaurantsOwned;
+        return $this->ownedRestaurants;
     }
 
-    public function addRestaurantsOwned(Restaurant $restaurantsOwned): static
+    public function addOwnedRestaurant(Restaurant $ownedRestaurant): static
     {
-        if (!$this->restaurantsOwned->contains($restaurantsOwned)) {
-            $this->restaurantsOwned->add($restaurantsOwned);
-            $restaurantsOwned->setOwner($this);
+        if (!$this->ownedRestaurants->contains($ownedRestaurant)) {
+            $this->ownedRestaurants->add($ownedRestaurant);
+            $ownedRestaurant->setOwner($this);
         }
 
         return $this;
     }
 
-    public function removeRestaurantsOwned(Restaurant $restaurantsOwned): static
+    public function removeOwnedRestaurant(Restaurant $ownedRestaurant): static
     {
-        if ($this->restaurantsOwned->removeElement($restaurantsOwned)) {
+        if ($this->ownedRestaurants->removeElement($ownedRestaurant)) {
             // set the owning side to null (unless already changed)
-            if ($restaurantsOwned->getOwner() === $this) {
-                $restaurantsOwned->setOwner(null);
+            if ($ownedRestaurant->getOwner() === $this) {
+                $ownedRestaurant->setOwner(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getEmployedIn(): ?Restaurant
-    {
-        return $this->employedIn;
-    }
-
-    public function setEmployedIn(?Restaurant $employedIn): static
-    {
-        $this->employedIn = $employedIn;
 
         return $this;
     }
