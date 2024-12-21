@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription confirmée - {{ parent() }}{% endblock %}
+
+{% block body %}
+<div class="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div class="sm:mx-auto sm:w-full sm:max-w-md">
+        <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+            <div class="text-center">
+                <svg class="mx-auto h-12 w-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                    Inscription confirmée
+                </h2>
+                <p class="mt-2 text-center text-sm text-gray-600">
+                    Merci de vous être inscrit sur notre plateforme de réservation de restaurants.
+                </p>
+            </div>
+
+            <div class="mt-6">
+                <div class="rounded-md bg-green-50 p-4">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-green-800">
+                                Votre compte a été créé avec succès
+                            </h3>
+                            <div class="mt-2 text-sm text-green-700">
+                                <p>
+                                    Vous pouvez maintenant vous connecter et commencer à utiliser nos services.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6">
+                <h3 class="text-lg font-medium text-gray-900">Prochaines étapes :</h3>
+                <ul class="mt-2 list-disc list-inside text-sm text-gray-600">
+                    <li>Connectez-vous à votre compte</li>
+                    <li>Complétez votre profil</li>
+                    <li>Explorez les restaurants disponibles</li>
+                    <li>Faites votre première réservation</li>
+                </ul>
+            </div>
+
+            <div class="mt-6">
+                <div class="flex flex-col space-y-4">
+                    <a href="{{ path('app_login') }}" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        Se connecter
+                    </a>
+                    <a href="{{ path('app_home') }}" class="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        Retour à l'accueil
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

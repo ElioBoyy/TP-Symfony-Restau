@@ -38,6 +38,9 @@ class Table
     #[ORM\Column]
     private ?int $nbPersonneMax = null;
 
+    #[ORM\Column(length: 10)]
+    private ?string $tableNumber = null;
+
     public function __construct()
     {
         $this->reservations = new ArrayCollection();
@@ -128,6 +131,18 @@ class Table
     public function setNbPersonneMax(int $nbPersonneMax): static
     {
         $this->nbPersonneMax = $nbPersonneMax;
+
+        return $this;
+    }
+
+    public function getTableNumber(): ?string
+    {
+        return $this->tableNumber;
+    }
+
+    public function setTableNumber(string $tableNumber): static
+    {
+        $this->tableNumber = $tableNumber;
 
         return $this;
     }

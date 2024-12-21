@@ -16,9 +16,9 @@ class SecurityController extends AbstractController
     #[Route(path: '/login', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
-        // if ($this->getUser()) {
-        //     return $this->redirectToRoute('target_path');
-        // }
+        if ($this->getUser()) {
+            return $this->redirectToRoute('app_error_already_logged_in');
+        }
 
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
@@ -47,6 +47,7 @@ class SecurityController extends AbstractController
             $user->setCountry($request->request->get('country'));
             $user->setAddress($request->request->get('address'));
             $user->setZipCode($request->request->get('zipCode'));
+            $user->setNewsletter($request->request->get('newsletter') === 'on');
             $user->setRoles(['ROLE_USER']);
             $user->setActive(false);
 
@@ -57,14 +58,51 @@ class SecurityController extends AbstractController
 
             $entityManager->persist($user);
             $entityManager->flush();
+
+            return $this->redirectToRoute('app_confirm');
         }
 
         return $this->render('security/register.html.twig');
+    }
+
+    #[Route('/confirm', name: 'app_confirm')]
+    public function confirm(): Response
+    {
+        return $this->render('security/registration_confirmation.html.twig');
     }
 
     #[Route(path: '/logout', name: 'app_logout')]
     public function logout(): void
     {
         throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
+    }
+
+    #[Route('/reset_password', name: 'app_forgot_password_request')]
+    public function forgotPasswordRequest(): Response
+    {
+        return $this->render('security/forgot_password_request.html.twig');
+    }
+
+    #[Route('/reset_password/{token}', name: 'app_reset_password')]
+    public function resetPassword(Request $request, string $token, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $entityManager): Response
+    {
+        $user = $entityManager->getRepository(User::class)->findOneBy(['resetToken' => $token]);
+
+        if (!$user) {
+            throw $this->createNotFoundException('Invalid token');
+        }
+
+        if ($request->isMethod('POST')) {
+            $newPassword = $request->request->get('password');
+            $user->setPassword($passwordHasher->hashPassword($user, $newPassword));
+            $user->setResetToken(null);
+
+            $entityManager->persist($user);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_login');
+        }
+
+        return $this->render('security/reset_password.html.twig', ['token' => $token]);
     }
 }
