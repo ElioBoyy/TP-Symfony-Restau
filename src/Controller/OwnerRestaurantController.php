@@ -13,14 +13,18 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/owner/restaurant')]
-//#[IsGranted('ROLE_OWNER')]
+#[IsGranted('ROLE_OWNER')]
 class OwnerRestaurantController extends AbstractController
 {
     #[Route('/', name: 'app_owner_restaurant_index', methods: ['GET'])]
     public function index(RestaurantRepository $restaurantRepository): Response
     {
+        $activeRestaurants = $restaurantRepository->findBy(['owner' => $this->getUser(), 'isActive' => true]);
+        $inactiveRestaurants = $restaurantRepository->findBy(['owner' => $this->getUser(), 'isActive' => false]);
+
         return $this->render('owner/restaurant/index.html.twig', [
-            'restaurants' => $restaurantRepository->findBy(['owner' => $this->getUser()]),
+            'active_restaurants' => $activeRestaurants,
+            'inactive_restaurants' => $inactiveRestaurants,
         ]);
     }
 
@@ -81,6 +85,39 @@ class OwnerRestaurantController extends AbstractController
             'restaurant' => $restaurant,
             'form' => $form->createView(),
         ]);
+    }
+
+    #[Route('/{id}/toggle-active', name: 'app_owner_restaurant_toggle_active', methods: ['POST'])]
+    public function toggleActive(Request $request, Restaurant $restaurant, EntityManagerInterface $entityManager): Response
+    {
+        if ($this->isCsrfTokenValid('toggle_active'.$restaurant->getId(), $request->request->get('_token'))) {
+            $restaurant->setIsActive(!$restaurant->isActive());
+            
+            foreach ($restaurant->getPlans() as $plan) {
+                $plan->setIsActive(!$plan->isActive());
+
+                foreach ($plan->getTables() as $table) {
+                    $table->setIsActive($table->isActive());
+                }
+            }
+            
+            $entityManager->flush();
+            $this->addFlash('success', $restaurant->isActive() ? 'Le restaurant a été réactivé.' : 'Le restaurant a été désactivé.');
+        }
+
+        return $this->redirectToRoute('app_owner_restaurant_index');
+    }
+
+    #[Route('/{id}/restore', name: 'app_owner_restaurant_restore', methods: ['POST'])]
+    public function restore(Request $request, Restaurant $restaurant, EntityManagerInterface $entityManager): Response
+    {
+        if ($this->isCsrfTokenValid('restore'.$restaurant->getId(), $request->request->get('_token'))) {
+            $restaurant->setIsActive(true);
+            $entityManager->flush();
+            $this->addFlash('success', 'Le restaurant a été restauré avec succès.');
+        }
+
+        return $this->redirectToRoute('app_owner_restaurant_index');
     }
 }
 

@@ -2,6 +2,27 @@
 
 {% block title %}Modifier la salle - {{ plan.name }}{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        #roomCanvas {
+            border: 2px solid #ccc;
+            cursor: move;
+        }
+        #editModal {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            display: none;
+        }
+    </style>
+{% endblock %}
+
 {% block body %}
 <div class="container mx-auto px-4 py-8">
     <h1 class="text-3xl font-bold mb-6">Modifier la salle - {{ plan.name }}</h1>
@@ -16,11 +37,354 @@
             <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
                 Enregistrer les modifications
             </button>
-            <a href="{{ path('app_owner_room_show', {'restaurant_id': restaurant.id, 'id': plan.id}) }}" class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">
-                Annuler
-            </a>
         </div>
     {{ form_end(form) }}
+
+    <div class="mt-8 relative">
+        <h2 class="text-2xl font-bold mb-4">Aménagement de la salle</h2>
+        <canvas id="roomCanvas" width="800" height="600"></canvas>
+        <div class="mt-4 space-x-2">
+            <button id="addCenterWallpoint" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                Ajouter un point au centre
+            </button>
+            <button id="addCenterTable" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Ajouter une table au centre
+            </button>
+            <button id="saveLayout" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
+                Sauvegarder
+            </button>
+        </div>
+
+        <div id="editModal" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+            <h3 id="modalTitle" class="text-xl font-bold mb-4"></h3>
+            <div id="tableEditForm" class="mb-4">
+                <label for="tableNumber" class="block text-gray-700 text-sm font-bold mb-2">Numéro de table</label>
+                <input type="text" id="tableNumber" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            </div>
+            <div class="flex justify-between">
+                <button id="updateElement" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                    Mettre à jour
+                </button>
+                <button id="deleteElement" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                    Supprimer
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        let deletedWallpoints = [];
+        let deletedTables = [];
+        $(document).ready(function() {
+            const canvas = document.getElementById('roomCanvas');
+            const ctx = canvas.getContext('2d');
+            let wallpoints = {{ wallpoints|json_encode|raw }};
+            let tables = {{ tables|json_encode|raw }};
+
+            console.log('Wallpoints:', wallpoints);
+            console.log('Tables:', tables);
+
+            let isDragging = false;
+            let draggedElement = null;
+            let selectedElement = null;
+
+            function drawRoom() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw walls
+                if (wallpoints.length > 1) {
+                    ctx.beginPath();
+                    ctx.strokeStyle = 'black';
+                    ctx.lineWidth = 2;
+                    ctx.moveTo(wallpoints[0].positionX, wallpoints[0].positionY);
+                    for (let i = 1; i < wallpoints.length; i++) {
+                        ctx.lineTo(wallpoints[i].positionX, wallpoints[i].positionY);
+                    }
+                    ctx.closePath();
+                    ctx.stroke();
+                }
+
+                // Draw wallpoints
+                wallpoints.forEach(wp => {
+                    ctx.fillStyle = 'black';
+                    ctx.beginPath();
+                    ctx.arc(wp.positionX, wp.positionY, 5, 0, 2 * Math.PI);
+                    ctx.fill();
+                });
+
+                // Draw tables
+                tables.forEach(table => {
+                    ctx.fillStyle = '#8B4513';
+                    ctx.fillRect(table.positionX - 25, table.positionY - 25, 50, 50);
+                    ctx.fillStyle = 'white';
+                    ctx.font = '12px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(table.tableNumber, table.positionX, table.positionY);
+                });
+
+                console.log('Room drawn');
+            }
+
+            function getMousePos(canvas, evt) {
+                const rect = canvas.getBoundingClientRect();
+                return {
+                    x: evt.clientX - rect.left,
+                    y: evt.clientY - rect.top
+                };
+            }
+
+            function isMouseOverElement(mousePos, element) {
+                if (element.positionX !== undefined) {
+                    // For wallpoints
+                    const distance = Math.sqrt(
+                        Math.pow(mousePos.x - element.positionX, 2) +
+                        Math.pow(mousePos.y - element.positionY, 2)
+                    );
+                    return distance <= 5;
+                } else {
+                    // For tables
+                    return mousePos.x >= element.positionX - 25 &&
+                           mousePos.x <= element.positionX + 25 &&
+                           mousePos.y >= element.positionY - 25 &&
+                           mousePos.y <= element.positionY + 25;
+                }
+            }
+
+            canvas.addEventListener('mousedown', function(e) {
+                const mousePos = getMousePos(canvas, e);
+                wallpoints.forEach(wp => {
+                    if (isMouseOverElement(mousePos, wp)) {
+                        isDragging = true;
+                        draggedElement = wp;
+                        selectedElement = wp;
+                        showEditModal('wallpoint');
+                    }
+                });
+                tables.forEach(table => {
+                    if (isMouseOverElement(mousePos, table)) {
+                        isDragging = true;
+                        draggedElement = table;
+                        selectedElement = table;
+                        showEditModal('table');
+                    }
+                });
+            });
+
+            canvas.addEventListener('mousemove', function(e) {
+                if (isDragging && draggedElement) {
+                    const mousePos = getMousePos(canvas, e);
+                    draggedElement.positionX = mousePos.x;
+                    draggedElement.positionY = mousePos.y;
+                    drawRoom();
+                }
+            });
+
+            canvas.addEventListener('mouseup', function() {
+                if (isDragging && draggedElement) {
+                    updateElementPosition(draggedElement);
+                    isDragging = false;
+                    draggedElement = null;
+                }
+            });
+
+            function updateElementPosition(element) {
+                let url, data;
+                if (element.positionX !== undefined) {
+                    // Wallpoint
+                    url = '{{ path('app_owner_room_wallpoint_edit', {'restaurant_id': restaurant.id, 'id': 'WALLPOINT_ID'}) }}';
+                    url = url.replace('WALLPOINT_ID', element.id);
+                    data = {
+                        wallpoint: {
+                            positionX: element.positionX,
+                            positionY: element.positionY
+                        }
+                    };
+                } else {
+                    // Table
+                    url = '{{ path('app_owner_room_table_edit', {'restaurant_id': restaurant.id, 'id': 'TABLE_ID'}) }}';
+                    url = url.replace('TABLE_ID', element.id);
+                    data = {
+                        table: {
+                            positionX: element.positionX,
+                            positionY: element.positionY
+                        }
+                    };
+                }
+
+                $.ajax({
+                    url: url,
+                    method: 'POST',
+                    data: data,
+                    success: function(response) {
+                        if (response.success) {
+                            console.log('La position a été mise à jour avec succès.');
+                        } else {
+                            console.error('Erreur lors de la sauvegarde de la position:', response.errors);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX error:', error);
+                    }
+                });
+            }
+
+            function showEditModal(type) {
+                const modal = document.getElementById('editModal');
+                const title = document.getElementById('modalTitle');
+                const tableEditForm = document.getElementById('tableEditForm');
+                const updateButton = document.getElementById('updateElement');
+                const deleteButton = document.getElementById('deleteElement');
+
+                if (type === 'table') {
+                    title.textContent = 'Modifier la table';
+                    tableEditForm.style.display = 'block';
+                    document.getElementById('tableNumber').value = selectedElement.tableNumber;
+                    updateButton.style.display = 'inline-block';
+                } else if (type === 'wallpoint') {
+                    title.textContent = 'Modifier le point de mur';
+                    tableEditForm.style.display = 'none';
+                    updateButton.style.display = 'none';
+                }
+                deleteButton.style.display = 'inline-block';
+                modal.style.display = 'block';
+            }
+
+            document.getElementById('updateElement').addEventListener('click', function() {
+                if (selectedElement.tableNumber !== undefined) {
+                    // It's a table
+                    const newTableNumber = document.getElementById('tableNumber').value;
+                    updateTable(selectedElement.id, newTableNumber);
+                }
+                document.getElementById('editModal').style.display = 'none';
+            });
+
+            function deleteElement() {
+                if (selectedElement.tableNumber !== undefined) {
+                    // It's a table
+                    tables = tables.filter(t => t.id !== selectedElement.id);
+                    deletedTables.push(selectedElement.id);
+                } else {
+                    // It's a wallpoint
+                    wallpoints = wallpoints.filter(wp => wp.id !== selectedElement.id);
+                    deletedWallpoints.push(selectedElement.id);
+                }
+                drawRoom();
+                document.getElementById('editModal').style.display = 'none';
+            }
+
+            document.getElementById('deleteElement').addEventListener('click', deleteElement);
+
+
+            function updateTable(id, newTableNumber) {
+                $.ajax({
+                    url: '{{ path('app_owner_room_table_edit', {'restaurant_id': restaurant.id, 'id': 'TABLE_ID'}) }}'.replace('TABLE_ID', id),
+                    method: 'POST',
+                    data: { tableNumber: newTableNumber },
+                    success: function(response) {
+                        if (response.success) {
+                            const table = tables.find(t => t.id === id);
+                            if (table) {
+                                table.tableNumber = newTableNumber;
+                                drawRoom();
+                            }
+                        } else {
+                            console.error('Erreur survenue lors de la sauvegarde de(s) (la) table(s):', response.errors);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX error:', error);
+                    }
+                });
+            }
+
+            $('#saveLayout').click(function() {
+                $.ajax({
+                    url: '{{ path('app_owner_room_save_layout', {'restaurant_id': restaurant.id, 'id': plan.id}) }}',
+                    method: 'POST',
+                    data: {
+                        wallpoints: JSON.stringify(wallpoints),
+                        tables: JSON.stringify(tables),
+                        deletedWallpoints: JSON.stringify(deletedWallpoints),
+                        deletedTables: JSON.stringify(deletedTables)
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            alert('Le plan de salle a été enregistré avec succès.');
+                            deletedWallpoints = [];
+                            deletedTables = [];
+                        } else {
+                            alert('Erreur survenue lors de la sauvegarde du plan de salle: ' + response.errors);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX error:', error);
+                        alert('Erreur survenue lors de la sauvegarde du plan de salle.');
+                    }
+                });
+            });
+
+            drawRoom();
+
+            $('#addCenterWallpoint').click(function() {
+                const x = canvas.width / 2;
+                const y = canvas.height / 2;
+                
+                $.ajax({
+                    url: '{{ path('app_owner_room_wallpoint_center_new', {'restaurant_id': restaurant.id, 'id': plan.id}) }}',
+                    method: 'POST',
+                    data: {
+                        positionX: x,
+                        positionY: y
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            wallpoints.push({
+                                id: response.id,
+                                positionX: x,
+                                positionY: y
+                            });
+                            drawRoom();
+                        } else {
+                            alert('Error: ' + response.errors);
+                        }
+                    }
+                });
+            });
+
+            $('#addCenterTable').click(function() {
+                const x = canvas.width / 2;
+                const y = canvas.height / 2;
+                
+                $.ajax({
+                    url: '{{ path('app_owner_room_table_center_new', {'restaurant_id': restaurant.id, 'id': plan.id}) }}',
+                    method: 'POST',
+                    data: {
+                        positionX: x,
+                        positionY: y
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            tables.push({
+                                id: response.id,
+                                positionX: x,
+                                positionY: y,
+                                nbPersonneMax: response.nbPersonneMax,
+                                tableNumber: response.tableNumber
+                            });
+                            drawRoom();
+                        } else {
+                            alert('Error: ' + response.errors);
+                        }
+                    }
+                });
+            });
+        });
+    </script>
 {% endblock %}
 

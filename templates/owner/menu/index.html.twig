@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Menus - {{ restaurant.name }}{% endblock %}
+
+{% block body %}
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold mb-6">Menus - {{ restaurant.name }}</h1>
+
+        <a href="{{ path('app_owner_menu_new', {'restaurant_id': restaurant.id}) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4 inline-block">
+            Créer un nouveau menu
+        </a>
+
+        <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for menu in menus %}
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-medium text-gray-900">{{ menu.name }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <a href="{{ path('app_owner_menu_show', {'restaurant_id': restaurant.id, 'id': menu.id}) }}" class="text-indigo-600 hover:text-indigo-900 mr-2">Voir</a>
+                                <a href="{{ path('app_owner_menu_edit', {'restaurant_id': restaurant.id, 'id': menu.id}) }}" class="text-indigo-600 hover:text-indigo-900 mr-2">Modifier</a>
+                                <form method="post" action="{{ path('app_owner_menu_delete', {'restaurant_id': restaurant.id, 'id': menu.id}) }}" class="inline-block">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ menu.id) }}">
+                                    <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce menu ?');">Supprimer</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="2" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                                Aucun menu trouvé. Créez-en un nouveau !
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-4">
+            <a href="{{ path('app_owner_restaurant_show', {'id': restaurant.id}) }}" class="text-indigo-600 hover:text-indigo-900">
+                Retour aux détails du restaurant
+            </a>
+        </div>
+    </div>
+{% endblock %}
+

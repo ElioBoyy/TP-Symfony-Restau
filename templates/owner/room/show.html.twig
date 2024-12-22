@@ -2,11 +2,22 @@
 
 {% block title %}Détails de la salle - {{ plan.name }}{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        #roomCanvas {
+            border: 2px solid #ccc;
+            margin: 20px auto;
+            display: block;
+        }
+    </style>
+{% endblock %}
+
 {% block body %}
 <div class="container mx-auto px-4 py-8">
     <h1 class="text-3xl font-bold mb-6">Détails de la salle - {{ plan.name }}</h1>
 
-    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-6">
         <div class="px-4 py-5 sm:px-6">
             <h3 class="text-lg leading-6 font-medium text-gray-900">Informations de la salle</h3>
         </div>
@@ -20,18 +31,96 @@
         </div>
     </div>
 
+    <div class="mt-8">
+        <h2 class="text-2xl font-bold mb-4">Aménagement de la salle</h2>
+        <canvas id="roomCanvas" width="800" height="600"></canvas>
+    </div>
+
     <div class="mt-6 flex space-x-3">
-        <a href="{{ path('app_owner_room_edit', {'restaurant_id': restaurant.id, 'id': plan.id}) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        <a href="{{ path('app_owner_room_edit', {'id': plan.id, 'restaurant_id': restaurant.id}) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
             Modifier
         </a>
-        <form method="post" action="{{ path('app_owner_room_delete', {'restaurant_id': restaurant.id, 'id': plan.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette salle ?');">
-            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ plan.id) }}">
-            <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Supprimer</button>
-        </form>
         <a href="{{ path('app_owner_room_index', {'restaurant_id': restaurant.id}) }}" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded">
             Retour à la liste des salles
         </a>
     </div>
 </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const canvas = document.getElementById('roomCanvas');
+            const ctx = canvas.getContext('2d');
+            const wallpoints = {{ wallpoints|json_encode|raw }};
+            const tables = {{ tables|json_encode|raw }};
+
+            console.log('Wallpoints:', wallpoints);
+            console.log('Tables:', tables);
+
+            function drawRoom() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw walls
+                if (wallpoints.length > 1) {
+                    ctx.beginPath();
+                    ctx.strokeStyle = 'black';
+                    ctx.lineWidth = 2;
+                    ctx.moveTo(wallpoints[0].positionX, wallpoints[0].positionY);
+                    for (let i = 1; i < wallpoints.length; i++) {
+                        ctx.lineTo(wallpoints[i].positionX, wallpoints[i].positionY);
+                    }
+                    ctx.closePath();
+                    ctx.stroke();
+                }
+
+                // Draw wallpoints
+                wallpoints.forEach(wp => {
+                    ctx.fillStyle = 'black';
+                    ctx.beginPath();
+                    ctx.arc(wp.positionX, wp.positionY, 5, 0, 2 * Math.PI);
+                    ctx.fill();
+                });
+
+                // Draw tables
+                tables.forEach(table => {
+                    ctx.fillStyle = '#8B4513';
+                    ctx.fillRect(table.positionX - 25, table.positionY - 25, 50, 50);
+                    ctx.fillStyle = 'white';
+                    ctx.font = '12px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(table.tableNumber, table.positionX, table.positionY);
+                });
+
+                console.log('Room drawn');
+            }
+
+            drawRoom();
+
+            canvas.addEventListener('mousemove', function(e) {
+                const rect = canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                let hoveredElement = null;
+
+                // Check if mouse is over a table
+                tables.forEach(table => {
+                    if (x > table.positionX - 25 && x < table.positionX + 25 &&
+                        y > table.positionY - 25 && y < table.positionY + 25) {
+                        hoveredElement = table;
+                    }
+                });
+
+                if (hoveredElement) {
+                    canvas.title = `Table ${hoveredElement.tableNumber} - Capacité: ${hoveredElement.nbPersonneMax} personnes`;
+                } else {
+                    canvas.title = '';
+                }
+            });
+        });
+    </script>
 {% endblock %}
 

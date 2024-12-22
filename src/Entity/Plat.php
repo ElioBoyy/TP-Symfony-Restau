@@ -20,6 +20,9 @@ class Plat
     #[ORM\JoinColumn(nullable: false)]
     private ?Menu $menu = null;
 
+    #[ORM\Column]
+    private ?int $price = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -45,6 +48,18 @@ class Plat
     public function setMenu(?Menu $menu): static
     {
         $this->menu = $menu;
+
+        return $this;
+    }
+
+    public function getPrice(): ?int
+    {
+        return $this->price;
+    }
+
+    public function setPrice(int $price): static
+    {
+        $this->price = $price;
 
         return $this;
     }

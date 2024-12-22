@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau Plat - {{ menu.name }} - {{ restaurant.name }}{% endblock %}
+
+{% block body %}
+  <div class="container mx-auto px-4 py-8">
+      <h1 class="text-3xl font-bold mb-6">Ajouter un nouveau plat - {{ menu.name }} - {{ restaurant.name }}</h1>
+
+      {{ form_start(form, {'attr': {'class': 'bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4'}}) }}
+          <div class="mb-4">
+              {{ form_label(form.libelle, null, {'label_attr': {'class': 'block text-gray-700 text-sm font-bold mb-2'}}) }}
+              {{ form_widget(form.libelle, {'attr': {'class': 'shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'}}) }}
+              {{ form_errors(form.libelle) }}
+          </div>
+          <div class="mb-4">
+              {{ form_label(form.price, null, {'label_attr': {'class': 'block text-gray-700 text-sm font-bold mb-2'}}) }}
+              {{ form_widget(form.price, {'attr': {'class': 'shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'}}) }}
+              {{ form_errors(form.price) }}
+          </div>
+          <div class="flex items-center justify-between">
+              <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+                  Ajouter le plat
+              </button>
+              <a href="{{ path('app_owner_menu_show', {'restaurant_id': restaurant.id, 'id': menu.id}) }}" class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">
+                  Annuler
+              </a>
+          </div>
+      {{ form_end(form) }}
+  </div>
+{% endblock %}
+

@@ -22,6 +22,7 @@ App\Entity\Restaurant:
     zipCode: <postcode()>
     horaires: []
     owner: "@user_<numberBetween(1, 100)>"
+    isActive: <boolean()>
 
 App\Entity\Table:
   table_{1..100}:
@@ -53,6 +54,7 @@ App\Entity\Plat:
   plat_{1..200}:
     libelle: <word()>
     menu: "@menu_<numberBetween(1, 50)>"
+    price: <numberBetween(999, 9999)>
 
 App\Entity\Plan:
   plan_{1..20}:

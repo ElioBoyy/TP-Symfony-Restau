@@ -31,6 +31,9 @@ class Menu
     #[ORM\Column(type: 'boolean')]
     private ?bool $isActive = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $description = null;
+
     public function __construct()
     {
         $this->plats = new ArrayCollection();
@@ -103,6 +106,18 @@ class Menu
     public function setIsActive(bool $isActive): static
     {
         $this->isActive = $isActive;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): static
+    {
+        $this->description = $description;
 
         return $this;
     }

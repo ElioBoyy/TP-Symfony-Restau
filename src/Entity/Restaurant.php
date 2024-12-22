@@ -58,6 +58,9 @@ class Restaurant
     #[ORM\OneToMany(targetEntity: Menu::class, mappedBy: 'restaurant')]
     private Collection $menus;
 
+    #[ORM\Column]
+    private ?bool $isActive = true;
+
     public function __construct()
     {
         $this->plans = new ArrayCollection();
@@ -247,11 +250,22 @@ class Restaurant
     public function removeMenu(Menu $menu): static
     {
         if ($this->menus->removeElement($menu)) {
-            // set the owning side to null (unless already changed)
             if ($menu->getRestaurant() === $this) {
                 $menu->setRestaurant(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isActive(): ?bool
+    {
+        return $this->isActive;
+    }
+
+    public function setIsActive(bool $isActive): static
+    {
+        $this->isActive = $isActive;
 
         return $this;
     }
