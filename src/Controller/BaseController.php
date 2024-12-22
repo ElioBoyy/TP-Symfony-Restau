@@ -13,14 +13,4 @@ class BaseController extends AbstractController
     {
         return $this->render('index.html.twig');
     }
-
-    #[Route('/profile', name: 'app_profile')]
-    public function profile(): Response
-    {
-        if (!$this->getUser()) {
-            return $this->redirectToRoute('app_login');
-        }
-
-        return $this->render('profile.html.twig');
-    }
 }

@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Profil Utilisateur{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-gray-100 py-6 flex flex-col justify-center sm:py-12 mt-10 mb-16">
+    <div class="relative py-3 sm:max-w-xl sm:mx-auto">
+        <div class="absolute inset-0 bg-gradient-to-r from-cyan-400 to-light-blue-500 shadow-lg transform -skew-y-6 sm:skew-y-0 sm:-rotate-6 sm:rounded-3xl"></div>
+        <div class="relative px-4 py-10 bg-white shadow-lg sm:rounded-3xl sm:p-20">
+            <h1 class="text-4xl font-bold text-gray-900 mb-8">Profil Utilisateur</h1>
+
+            {% for message in app.flashes('success') %}
+                <div class="mb-4 p-4 bg-green-100 border-l-4 border-green-500 text-green-700">
+                    <p class="font-bold">Succès</p>
+                    <p>{{ message }}</p>
+                </div>
+            {% endfor %}
+
+            {% if form is defined and form is not null %}
+                {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+                    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                        {{ form_row(form.name, {'attr': {'class': 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50'}}) }}
+                        {{ form_row(form.email, {'attr': {'class': 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50'}}) }}
+                        {{ form_row(form.phone, {'attr': {'class': 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50'}}) }}
+                        {{ form_row(form.country, {'attr': {'class': 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50'}}) }}
+                        {{ form_row(form.address, {'attr': {'class': 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50'}}) }}
+                        {{ form_row(form.zipCode, {'attr': {'class': 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50'}}) }}
+                    </div>
+                    <div class="flex items-center">
+                        {{ form_widget(form.isNewsletter, {'attr': {'class': 'h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded'}}) }}
+                        {{ form_label(form.isNewsletter, 'S\'abonner à la newsletter', {'label_attr': {'class': 'ml-2 block text-sm text-gray-900'}}) }}
+                    </div>
+                    <div class="flex items-center justify-end mt-4">
+                        <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Mettre à jour le profil
+                        </button>
+                    </div>
+                {{ form_end(form) }}
+            {% else %}
+                <p class="text-red-500">Erreur : Le formulaire n'est pas défini ou est nul.</p>
+            {% endif %}
+
+            {% if upgradeForm is defined and upgradeForm is not null %}
+                <div class="mt-10 pt-10 border-t border-gray-200">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">Demander d'ouvrir un compte professionnel</h2>
+                    <p class="mb-4 text-gray-600">Si vous souhaitez mettre à niveau votre compte client vers un compte professionnel, veuillez soumettre une demande ci-dessous :</p>
+                    {{ form_start(upgradeForm) }}
+                        <div class="mt-4">
+                            {{ form_widget(upgradeForm.submit, {'attr': {'class': 'inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500'}}) }}
+                        </div>
+                    {{ form_end(upgradeForm) }}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
