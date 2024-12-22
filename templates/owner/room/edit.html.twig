@@ -1,10 +1,10 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Créer une nouvelle salle - {{ restaurant.name }}{% endblock %}
+{% block title %}Modifier la salle - {{ plan.name }}{% endblock %}
 
 {% block body %}
 <div class="container mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold mb-6">Créer une nouvelle salle pour {{ restaurant.name }}</h1>
+    <h1 class="text-3xl font-bold mb-6">Modifier la salle - {{ plan.name }}</h1>
 
     {{ form_start(form, {'attr': {'class': 'bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4'}}) }}
         <div class="mb-4">
@@ -14,10 +14,10 @@
         </div>
         <div class="flex items-center justify-between">
             <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
-                Créer la salle
+                Enregistrer les modifications
             </button>
-            <a href="{{ path('app_owner_room_index', {'restaurant_id': restaurant.id}) }}" class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">
-                Retour à la liste
+            <a href="{{ path('app_owner_room_show', {'restaurant_id': restaurant.id, 'id': plan.id}) }}" class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">
+                Annuler
             </a>
         </div>
     {{ form_end(form) }}

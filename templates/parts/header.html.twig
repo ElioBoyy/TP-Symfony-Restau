@@ -24,9 +24,12 @@
                                 <a href="{{ path('app_admin_dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Tableau de bord</a>
                             {% elseif is_granted('ROLE_OWNER') %}
                                 <a href="{{ path('app_owner_dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Tableau de bord</a>
+                                <a href="{{ path('app_owner_restaurant_index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Mes restaurants</a>
                             {% elseif is_granted('ROLE_USER') %}
                                 <a href="{{ path('app_user_dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Tableau de bord</a>
                             {% endif %}
+
+                            <a href="{{ path('app_logout') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Se déconnecter</a>
                         </div>
                     </div>
                 {% else %}
