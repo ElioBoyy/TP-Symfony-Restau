@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion de la salle - {{ plan.name }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+    <style>
+        .wallpoint {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: black;
+            cursor: move;
+        }
+        .table {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-color: brown;
+            cursor: move;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-6">Gestion de la salle - {{ plan.name }}</h1>
+
+    <div class="flex flex-wrap -mx-4">
+        <div class="w-full lg:w-3/4 px-4 mb-8">
+            <div id="room" class="bg-white border-2 border-gray-300 h-96 relative" data-plan-id="{{ plan.id }}">
+                <!-- Les Wallpoints et les Tables seront ajoutés ici dynamiquement -->
+            </div>
+        </div>
+        <div class="w-full lg:w-1/4 px-4">
+            <div class="bg-white border border-gray-300 p-4 mb-4">
+                <h2 class="text-xl font-semibold mb-4">Outils</h2>
+                <button id="addWallpoint" class="bg-blue-500 text-white px-4 py-2 rounded mb-2 w-full">Ajouter Wallpoint</button>
+                <button id="addTable" class="bg-green-500 text-white px-4 py-2 rounded mb-2 w-full">Ajouter Table</button>
+                <button id="saveLayout" class="bg-red-500 text-white px-4 py-2 rounded w-full">Sauvegarder</button>
+            </div>
+            <div id="tableProperties" class="bg-white border border-gray-300 p-4 hidden">
+                <h2 class="text-xl font-semibold mb-4">Propriétés de la table</h2>
+                <input type="number" id="nbPersonneMax" placeholder="Nombre de personnes max" class="w-full px-3 py-2 border border-gray-300 rounded mb-2">
+                <input type="text" id="tableNumber" placeholder="Numéro de table" class="w-full px-3 py-2 border border-gray-300 rounded mb-2">
+                <button id="updateTable" class="bg-blue-500 text-white px-4 py-2 rounded w-full">Mettre à jour</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script>
+        var initialWallpoints = {{ wallpoints|raw }};
+        var initialTables = {{ tables|raw }};
+    </script>
+    <script src="{{ asset('js/room-management.js') }}"></script>
+{% endblock %}
+

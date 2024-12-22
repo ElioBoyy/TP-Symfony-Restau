@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Créer une nouvelle salle{% endblock %}
+
+{% block body %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-6">Créer une nouvelle salle</h1>
+
+    {{ form_start(form, {'attr': {'class': 'bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4'}}) }}
+        <div class="mb-4">
+            {{ form_label(form.name, null, {'label_attr': {'class': 'block text-gray-700 text-sm font-bold mb-2'}}) }}
+            {{ form_widget(form.name, {'attr': {'class': 'shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'}}) }}
+            {{ form_errors(form.name) }}
+        </div>
+        <div class="flex items-center justify-between">
+            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+                Créer la salle
+            </button>
+            <a href="{{ path('app_owner_room_index') }}" class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">
+                Retour à la liste
+            </a>
+        </div>
+    {{ form_end(form) }}
+</div>
+{% endblock %}
+
