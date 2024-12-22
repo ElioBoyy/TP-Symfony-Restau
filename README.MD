@@ -6,6 +6,8 @@ Ce projet est un site web de création et de réservation de restaurants. Il per
 
 Ce projet a été fait en 48h.
 
+Il manque quelques fonctionnalités.
+
 ## Fonctionnalités
 
 - Création de profils utilisateur et de restaurants
