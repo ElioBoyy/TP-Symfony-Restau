@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Choisir un plan - {{ restaurant.name }}{% endblock %}
+
+{% block body %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-6">Choisir un plan pour {{ restaurant.name }}</h1>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for plan in plans %}
+            <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+                <div class="p-6">
+                    <h2 class="text-xl font-semibold mb-4">{{ plan.name }}</h2>
+                    <a href="{{ path('app_reservation_tables', {'id': plan.id}) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        Choisir ce plan
+                    </a>
+                </div>
+            </div>
+        {% else %}
+            <p>Aucun plan disponible pour ce restaurant.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+

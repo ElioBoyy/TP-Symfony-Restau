@@ -1,0 +1,116 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Choisir une table - {{ plan.name }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        #roomCanvas {
+            border: 2px solid #ccc;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-6">Choisir une table pour {{ plan.name }}</h1>
+
+    <canvas id="roomCanvas" width="800" height="600"></canvas>
+
+    <div id="tableModal" class="fixed z-10 inset-0 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                        Choisir l'heure de réservation
+                    </h3>
+                    <div class="mt-2">
+                        <form id="reservationForm" method="POST">
+                            <input type="hidden" name="date" id="reservationDate">
+                            <div class="mt-4 grid grid-cols-2 gap-4">
+                                <button type="button" class="timeButton bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" data-time="12:00">12:00</button>
+                                <button type="button" class="timeButton bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" data-time="13:30">13:30</button>
+                                <button type="button" class="timeButton bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" data-time="19:00">19:00</button>
+                                <button type="button" class="timeButton bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" data-time="20:45">20:45</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const canvas = document.getElementById('roomCanvas');
+    const ctx = canvas.getContext('2d');
+    const tables = {{ plan.tables|json_encode|raw }};
+    const modal = document.getElementById('tableModal');
+    const reservationForm = document.getElementById('reservationForm');
+    const reservationDate = document.getElementById('reservationDate');
+    let selectedTable = null;
+
+    function drawRoom() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        tables.forEach(table => {
+            ctx.fillStyle = '#8B4513';
+            ctx.fillRect(table.positionX - 25, table.positionY - 25, 50, 50);
+            ctx.fillStyle = 'white';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(table.tableNumber, table.positionX, table.positionY);
+        });
+    }
+
+    drawRoom();
+
+    canvas.addEventListener('click', function(e) {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        tables.forEach(table => {
+            if (x > table.positionX - 25 && x < table.positionX + 25 &&
+                y > table.positionY - 25 && y < table.positionY + 25) {
+                selectedTable = table;
+                showModal();
+            }
+        });
+    });
+
+    function showModal() {
+        modal.classList.remove('hidden');
+        reservationDate.value = new Date().toISOString().split('T')[0]; // Set current date
+    }
+
+    document.querySelectorAll('.timeButton').forEach(button => {
+        button.addEventListener('click', function() {
+            const time = this.getAttribute('data-time');
+            reservationForm.action = "{{ path('app_reservation_create', {'id': 'TABLE_ID'}) }}".replace('TABLE_ID', selectedTable.id);
+            const formData = new FormData(reservationForm);
+            formData.append('time', time);
+            
+            fetch(reservationForm.action, {
+                method: 'POST',
+                body: formData
+            }).then(response => {
+                if (response.ok) {
+                    window.location.href = "{{ path('restaurant_details', {'id': plan.restaurant.id}) }}";
+                } else {
+                    alert('Une erreur est survenue lors de la réservation.');
+                }
+            });
+        });
+    });
+});
+</script>
+{% endblock %}
+

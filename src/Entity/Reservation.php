@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ReservationRepository::class)]
 class Reservation
@@ -16,24 +17,22 @@ class Reservation
     #[ORM\Column]
     private ?int $id = null;
 
-    /**
-     * @var Collection<int, Table>
-     */
-    #[ORM\ManyToMany(targetEntity: Table::class, mappedBy: 'reservations')]
-    private Collection $tables;
-
     #[ORM\ManyToOne(inversedBy: 'reservations')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Restaurant $restaurant = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Assert\NotBlank]
+    #[Assert\GreaterThanOrEqual('today')]
     private ?\DateTimeInterface $date = null;
 
-    #[ORM\Column(nullable: false)]
+    #[ORM\Column]
+    #[Assert\NotBlank]
+    #[Assert\Positive]
     private ?int $nbPersonne = null;
 
     #[ORM\Column(length: 1024, nullable: true)]
-    private ?string $commentary = null;
+    private ?string $commentaire = null;
 
     #[ORM\Column(type: 'boolean')]
     private ?bool $isActive = true;
@@ -41,6 +40,14 @@ class Reservation
     #[ORM\ManyToOne(inversedBy: 'reservations')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
+
+    #[ORM\ManyToMany(targetEntity: Table::class, inversedBy: 'reservations')]
+    #[ORM\JoinTable(name: 'reservation_table')]
+    private Collection $tables;
+
+    #[ORM\ManyToOne(inversedBy: 'reservations')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Plan $plan = null;
 
     public function __construct()
     {
@@ -52,42 +59,14 @@ class Reservation
         return $this->id;
     }
 
-    /**
-     * @return Collection<int, Table>
-     */
-    public function getTables(): Collection
-    {
-        return $this->tables;
-    }
-
-    public function addTable(Table $table): static
-    {
-        if (!$this->tables->contains($table)) {
-            $this->tables->add($table);
-            $table->addReservation($this);
-        }
-
-        return $this;
-    }
-
-    public function removeTable(Table $table): static
-    {
-        if ($this->tables->removeElement($table)) {
-            $table->removeReservation($this);
-        }
-
-        return $this;
-    }
-
     public function getRestaurant(): ?Restaurant
     {
         return $this->restaurant;
     }
 
-    public function setRestaurant(?Restaurant $restaurant): static
+    public function setRestaurant(?Restaurant $restaurant): self
     {
         $this->restaurant = $restaurant;
-
         return $this;
     }
 
@@ -96,10 +75,9 @@ class Reservation
         return $this->date;
     }
 
-    public function setDate(\DateTimeInterface $date): static
+    public function setDate(\DateTimeInterface $date): self
     {
         $this->date = $date;
-
         return $this;
     }
 
@@ -108,22 +86,20 @@ class Reservation
         return $this->nbPersonne;
     }
 
-    public function setNbPersonne(int $nbPersonne): static
+    public function setNbPersonne(int $nbPersonne): self
     {
         $this->nbPersonne = $nbPersonne;
-
         return $this;
     }
 
-    public function getCommentary(): ?string
+    public function getCommentaire(): ?string
     {
-        return $this->commentary;
+        return $this->commentaire;
     }
 
-    public function setCommentary(string $commentary): static
+    public function setCommentaire(?string $commentaire): self
     {
-        $this->commentary = $commentary;
-
+        $this->commentaire = $commentaire;
         return $this;
     }
 
@@ -132,10 +108,9 @@ class Reservation
         return $this->isActive;
     }
 
-    public function setIsActive(bool $isActive): static
+    public function setIsActive(bool $isActive): self
     {
         $this->isActive = $isActive;
-
         return $this;
     }
 
@@ -144,10 +119,42 @@ class Reservation
         return $this->user;
     }
 
-    public function setUser(?User $user): static
+    public function setUser(?User $user): self
     {
         $this->user = $user;
+        return $this;
+    }
+
+    public function getTables(): Collection
+    {
+        return $this->tables;
+    }
+
+    public function addTable(Table $table): self
+    {
+        if (!$this->tables->contains($table)) {
+            $this->tables[] = $table;
+        }
 
         return $this;
     }
+
+    public function removeTable(Table $table): self
+    {
+        $this->tables->removeElement($table);
+
+        return $this;
+    }
+
+    public function getPlan(): ?Plan
+    {
+        return $this->plan;
+    }
+
+    public function setPlan(?Plan $plan): self
+    {
+        $this->plan = $plan;
+        return $this;
+    }
 }
+
