@@ -31,6 +31,7 @@ App\Entity\Table:
     isActive: <boolean()>
     nbPersonneMax: <numberBetween(2, 10)>
     tableNumber: <numerify('T###')>
+    reservations: "<numberBetween(1, 5)>x @reservation_<numberBetween(1, 200)>"
 
 App\Entity\Reservation:
   reservation_{1..200}:
@@ -40,6 +41,7 @@ App\Entity\Reservation:
     commentary: "<boolean()> ? <text(200)> : null"
     isActive: <boolean()>
     user: "@user_<numberBetween(1, 100)>"
+    tables: "<numberBetween(1, 3)>x @table_<numberBetween(1, 100)>"
 
 App\Entity\Menu:
   menu_{1..50}:
