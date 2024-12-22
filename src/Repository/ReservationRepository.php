@@ -3,11 +3,17 @@
 namespace App\Repository;
 
 use App\Entity\Reservation;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<Reservation>
+ *
+ * @method Reservation|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Reservation|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Reservation[]    findAll()
+ * @method Reservation[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class ReservationRepository extends ServiceEntityRepository
 {
@@ -16,28 +22,28 @@ class ReservationRepository extends ServiceEntityRepository
         parent::__construct($registry, Reservation::class);
     }
 
-    //    /**
-    //     * @return Reservation[] Returns an array of Reservation objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('r')
-    //            ->andWhere('r.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('r.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function findUpcomingReservations(User $user, \DateTime $now): array
+    {
+        return $this->createQueryBuilder('r')
+            ->andWhere('r.user = :user')
+            ->andWhere('r.date > :now')
+            ->setParameter('user', $user)
+            ->setParameter('now', $now)
+            ->orderBy('r.date', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 
-    //    public function findOneBySomeField($value): ?Reservation
-    //    {
-    //        return $this->createQueryBuilder('r')
-    //            ->andWhere('r.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function findPastReservations(User $user, \DateTime $now): array
+    {
+        return $this->createQueryBuilder('r')
+            ->andWhere('r.user = :user')
+            ->andWhere('r.date <= :now')
+            ->setParameter('user', $user)
+            ->setParameter('now', $now)
+            ->orderBy('r.date', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
 }
+

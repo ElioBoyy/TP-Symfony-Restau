@@ -12,6 +12,20 @@ App\Entity\User:
     isNewsletter: <boolean()>
     resetToken: ~
 
+App\Entity\User:
+  user_{1..100}:
+    email: "admin@admin.com"
+    roles: ["<randomElement(['ROLE_ADMIN', 'ROLE_ADMIN'])>"]
+    password: <hashPassword('admin')>
+    name: <name()>
+    phone: <numerify('06########')>
+    country: "France"
+    address: <address()>
+    zipCode: <postcode()>
+    isActive: <boolean()>
+    isNewsletter: <boolean()>
+    resetToken: ~
+
 App\Entity\Restaurant:
   restaurant_{1..20}:
     name: <company()>
