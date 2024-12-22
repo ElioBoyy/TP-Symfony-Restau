@@ -12,10 +12,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/reservation')]
-#[IsGranted('ROLE_USER')]
 class ReservationController extends AbstractController
 {
     #[Route('/{id}/plans', name: 'app_reservation_plans', methods: ['GET'])]
@@ -32,8 +30,33 @@ class ReservationController extends AbstractController
     #[Route('/{id}/tables', name: 'app_reservation_tables', methods: ['GET'])]
     public function selectTable(Plan $plan): Response
     {
+        $tables = $plan->getTables();
+        $wallpoints = $plan->getWallpoints();
+
+        $tableData = [];
+        foreach ($tables as $table) {
+            $tableData[] = [
+                'id' => $table->getId(),
+                'tableNumber' => $table->getTableNumber(),
+                'positionX' => $table->getPositionX(),
+                'positionY' => $table->getPositionY(),
+                'nbPersonneMax' => $table->getNbPersonneMax(),
+            ];
+        }
+
+        $wallpointData = [];
+        foreach ($wallpoints as $wallpoint) {
+            $wallpointData[] = [
+                'id' => $wallpoint->getId(),
+                'positionX' => $wallpoint->getPositionX(),
+                'positionY' => $wallpoint->getPositionY(),
+            ];
+        }
+
         return $this->render('reservation/select_table.html.twig', [
             'plan' => $plan,
+            'tables' => $tableData,
+            'wallpoints' => $wallpointData,
         ]);
     }
 
@@ -47,7 +70,7 @@ class ReservationController extends AbstractController
         $reservation->setUser($this->getUser());
         $reservation->setRestaurant($table->getPlan()->getRestaurant());
         $reservation->setPlan($table->getPlan());
-        $reservation->setTable($table);
+        $reservation->addTable($table);
         $reservation->setDate($date);
         $reservation->setNbPersonne($table->getNbPersonneMax()); // Par défaut, on réserve pour le nombre max de personnes
         $reservation->setIsActive(true);

@@ -58,7 +58,7 @@
                     <a href="{{ path('restaurant_menus', {'id': restaurant.id}) }}" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-110 w-full sm:w-auto text-center">
                         Voir les menus
                     </a>
-                    {% if is_granted('ROLE_USER') %}
+                    {% if is_granted('ROLE_USER') or is_granted('ROLE_OWNER') or is_granted('ROLE_ADMIN') %}
                         <a href="{{ path('app_reservation_plans', {'id': restaurant.id}) }}" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-110 w-full sm:w-auto text-center">
                             Réserver une table
                         </a>
