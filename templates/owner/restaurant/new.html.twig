@@ -14,6 +14,18 @@
         </div>
 
         <div class="mb-4">
+            {{ form_label(form.shortSummary, null, {'label_attr': {'class': 'block text-gray-700 text-sm font-bold mb-2'}}) }}
+            {{ form_widget(form.shortSummary, {'attr': {'class': 'shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline', 'rows': 3}}) }}
+            {{ form_errors(form.shortSummary) }}
+        </div>
+
+        <div class="mb-4">
+            {{ form_label(form.longSummary, null, {'label_attr': {'class': 'block text-gray-700 text-sm font-bold mb-2'}}) }}
+            {{ form_widget(form.longSummary, {'attr': {'class': 'shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline', 'rows': 5}}) }}
+            {{ form_errors(form.longSummary) }}
+        </div>
+
+        <div class="mb-4">
             {{ form_label(form.address, null, {'label_attr': {'class': 'block text-gray-700 text-sm font-bold mb-2'}}) }}
             {{ form_widget(form.address, {'attr': {'class': 'shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'}}) }}
             {{ form_errors(form.address) }}
@@ -21,7 +33,7 @@
 
         <div class="mb-4">
             {{ form_label(form.country, null, {'label_attr': {'class': 'block text-gray-700 text-sm font-bold mb-2'}}) }}
-            {{ form_widget(form.country, {'attr': {'class': 'shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'}}) }}
+            {{ form_widget(form.country, {'attr': {'class': 'shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline', 'rows': 5}}) }}
             {{ form_errors(form.country) }}
         </div>
 

@@ -5,7 +5,7 @@ namespace App\Form;
 use App\Entity\Restaurant;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\TelType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -17,27 +17,29 @@ class RestaurantType extends AbstractType
         $builder
             ->add('name', TextType::class, [
                 'label' => 'Nom du restaurant',
-                'attr' => ['placeholder' => 'Entrez le nom du restaurant'],
             ])
-            ->add('address', TextType::class, [
-                'label' => 'Adresse',
-                'attr' => ['placeholder' => 'Adresse du restaurant'],
+            ->add('shortSummary', TextareaType::class, [
+                'label' => 'Résumé court',
+                'required' => true,
             ])
-            ->add('country', TextType::class, [
-                'label' => 'Pays',
-                'attr' => ['placeholder' => 'Pays du restaurant'],
-            ])
-            ->add('zipCode', TextType::class, [
-                'label' => 'Code postal',
-                'attr' => ['placeholder' => 'Code postal du restaurant'],
-            ])
-            ->add('phone', TelType::class, [
-                'label' => 'Téléphone',
-                'attr' => ['placeholder' => 'Numéro de téléphone'],
+            ->add('longSummary', TextareaType::class, [
+                'label' => 'Description détaillée',
+                'required' => false,
             ])
             ->add('email', EmailType::class, [
                 'label' => 'Email',
-                'attr' => ['placeholder' => 'Adresse email du restaurant'],
+            ])
+            ->add('phone', TextType::class, [
+                'label' => 'Téléphone',
+            ])
+            ->add('address', TextType::class, [
+                'label' => 'Adresse',
+            ])
+            ->add('zipCode', TextType::class, [
+                'label' => 'Code postal',
+            ])
+            ->add('country', TextType::class, [
+                'label' => 'Pays',
             ])
         ;
     }

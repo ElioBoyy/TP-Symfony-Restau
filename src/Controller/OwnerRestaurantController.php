@@ -69,7 +69,7 @@ class OwnerRestaurantController extends AbstractController
         if ($restaurant->getOwner() !== $this->getUser()) {
             throw $this->createAccessDeniedException();
         }
-
+        
         $form = $this->createForm(RestaurantType::class, $restaurant);
         $form->handleRequest($request);
 

@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\Restaurant;
+use App\Repository\RestaurantRepository;
 use App\Service\RestaurantSearchService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -10,27 +12,24 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class RestaurantController extends AbstractController
 {
-    private $restaurantSearchService;
-
-    public function __construct(RestaurantSearchService $restaurantSearchService)
-    {
-        $this->restaurantSearchService = $restaurantSearchService;
-    }
-
     #[Route('/restaurants/search', name: 'restaurant_search', methods: ['GET'])]
-    public function search(Request $request): Response
+    public function search(Request $request, RestaurantSearchService $searchService): Response
     {
-        $query = $request->query->get('q', '');
+        $query = $request->query->get('q');
         $page = $request->query->getInt('page', 1);
         $limit = 6;
 
-        $restaurants = $this->restaurantSearchService->searchRestaurants($query, $page, $limit);
-        $total = $this->restaurantSearchService->getTotalResults($query);
+        if ($query) {
+            $restaurants = $searchService->searchRestaurants($query, $page, $limit);
+            $total = $searchService->getTotalResults($query);
+        } else {
+            $restaurants = [];
+            $total = 0;
+        }
 
         if ($request->isXmlHttpRequest()) {
             return $this->render('restaurant/_search_results.html.twig', [
-                'restaurants' => $restaurants,
-                'query' => $query,
+                'restaurants' => $restaurants
             ]);
         }
 
@@ -39,17 +38,25 @@ class RestaurantController extends AbstractController
             'query' => $query,
             'page' => $page,
             'limit' => $limit,
-            'total' => $total,
+            'total' => $total
+        ]);
+    }
+
+    #[Route('/restaurants', name: 'restaurant_list', methods: ['GET'])]
+    public function list(RestaurantRepository $restaurantRepository): Response
+    {
+        $restaurants = $restaurantRepository->findAll();
+
+        return $this->render('restaurant/list.html.twig', [
+            'restaurants' => $restaurants,
         ]);
     }
 
     #[Route('/restaurant/{id}', name: 'restaurant_details', methods: ['GET'])]
-    public function details(int $id): Response
+    public function details(Restaurant $restaurant): Response
     {
-        // Implement the logic to fetch and display restaurant details
-        // This is just a placeholder
         return $this->render('restaurant/details.html.twig', [
-            'id' => $id,
+            'restaurant' => $restaurant,
         ]);
     }
 }
