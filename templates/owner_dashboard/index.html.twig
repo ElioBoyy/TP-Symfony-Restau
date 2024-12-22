@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard Propriétaire{% endblock %}
+
+{% block body %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-6">Dashboard Propriétaire</h1>
+
+    {% for data in dashboardData %}
+        <div class="mb-12 bg-white shadow-lg rounded-lg overflow-hidden">
+            <div class="bg-gray-100 px-4 py-3">
+                <h2 class="text-2xl font-semibold">{{ data.restaurant.name }}</h2>
+            </div>
+            <div class="p-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-xl font-semibold mb-4">Réservations à venir</h3>
+                        {% if data.upcomingReservations is empty %}
+                            <p class="text-gray-600">Aucune réservation à venir.</p>
+                        {% else %}
+                            <ul class="space-y-4">
+                                {% for reservation in data.upcomingReservations %}
+                                    <li class="bg-white shadow rounded-lg p-4">
+                                        <p class="font-bold">{{ reservation.user.name }}</p>
+                                        <p class="text-sm text-gray-600">Date: {{ reservation.date|date('d/m/Y H:i') }}</p>
+                                        <p class="text-sm text-gray-600">Nombre de personnes: {{ reservation.nbPersonne }}</p>
+                                        <p class="text-sm text-gray-600">Salle: {{ reservation.plan.name }}</p>
+                                        {% if reservation.commentaire %}
+                                            <p class="text-sm text-gray-600">Commentaire: {{ reservation.commentaire }}</p>
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold mb-4">Réservations passées</h3>
+                        {% if data.pastReservations is empty %}
+                            <p class="text-gray-600">Aucune réservation passée.</p>
+                        {% else %}
+                            <ul class="space-y-4">
+                                {% for reservation in data.pastReservations %}
+                                    <li class="bg-white shadow rounded-lg p-4">
+                                        <p class="font-bold">{{ reservation.user.name }}</p>
+                                        <p class="text-sm text-gray-600">Date: {{ reservation.date|date('d/m/Y H:i') }}</p>
+                                        <p class="text-sm text-gray-600">Nombre de personnes: {{ reservation.nbPersonne }}</p>
+                                        <p class="text-sm text-gray-600">Salle: {{ reservation.plan.name }}</p>
+                                        {% if reservation.commentaire %}
+                                            <p class="text-sm text-gray-600">Commentaire: {{ reservation.commentaire }}</p>
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <p class="text-gray-600">Vous n'avez pas encore de restaurants enregistrés.</p>
+    {% endfor %}
+</div>
+{% endblock %}
+
