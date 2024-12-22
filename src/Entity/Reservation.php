@@ -35,8 +35,8 @@ class Reservation
     #[ORM\Column(length: 1024, nullable: true)]
     private ?string $commentary = null;
 
-    #[ORM\Column(options: ['default' => true])]
-    private ?bool $isActive = null;
+    #[ORM\Column(type: 'boolean')]
+    private ?bool $isActive = true;
 
     #[ORM\ManyToOne(inversedBy: 'reservations')]
     #[ORM\JoinColumn(nullable: false)]
@@ -132,7 +132,7 @@ class Reservation
         return $this->isActive;
     }
 
-    public function setActive(bool $isActive): static
+    public function setIsActive(bool $isActive): static
     {
         $this->isActive = $isActive;
 

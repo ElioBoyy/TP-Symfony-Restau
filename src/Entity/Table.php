@@ -32,8 +32,8 @@ class Table
     #[ORM\Column]
     private ?int $positionY = null;
 
-    #[ORM\Column]
-    private ?bool $isActive = null;
+    #[ORM\Column(type: 'boolean')]
+    private ?bool $isActive = true;
 
     #[ORM\Column]
     private ?int $nbPersonneMax = null;
@@ -111,12 +111,12 @@ class Table
         return $this;
     }
 
-    public function isActive(): ?bool
+    public function isActive(): bool
     {
         return $this->isActive;
     }
 
-    public function setActive(bool $isActive): static
+    public function setIsActive(bool $isActive): static
     {
         $this->isActive = $isActive;
 

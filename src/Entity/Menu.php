@@ -28,7 +28,7 @@ class Menu
     #[ORM\JoinColumn(nullable: false)]
     private ?Restaurant $restaurant = null;
 
-    #[ORM\Column(options: ['default' => true])]
+    #[ORM\Column(type: 'boolean')]
     private ?bool $isActive = null;
 
     public function __construct()
@@ -95,12 +95,12 @@ class Menu
         return $this;
     }
 
-    public function isActive(): ?bool
+    public function isActive(): bool
     {
         return $this->isActive;
     }
 
-    public function setActive(bool $isActive): static
+    public function setIsActive(bool $isActive): static
     {
         $this->isActive = $isActive;
 

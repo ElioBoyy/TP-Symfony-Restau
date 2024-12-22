@@ -45,7 +45,7 @@ class Restaurant
     #[ORM\Column(length: 30)]
     private ?string $zipCode = null;
 
-    #[ORM\Column]
+    #[ORM\Column(type: "json")]
     private array $horaires = [];
 
     #[ORM\ManyToOne(inversedBy: 'ownedRestaurants')]
