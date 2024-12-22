@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Réservations{% endblock %}
+
+{% block body %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-6">Liste des Réservations</h1>
+
+    <table class="min-w-full bg-white">
+        <thead>
+            <tr>
+                <th class="py-2 px-4 border-b">ID</th>
+                <th class="py-2 px-4 border-b">Restaurant</th>
+                <th class="py-2 px-4 border-b">Utilisateur</th>
+                <th class="py-2 px-4 border-b">Date et Heure</th>
+                <th class="py-2 px-4 border-b">Nombre de personnes</th>
+                <th class="py-2 px-4 border-b">Statut</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for reservation in reservations %}
+            <tr>
+                <td class="py-2 px-4 border-b">{{ reservation.id }}</td>
+                <td class="py-2 px-4 border-b">{{ reservation.restaurant.name }}</td>
+                <td class="py-2 px-4 border-b">{{ reservation.user.name }}</td>
+                <td class="py-2 px-4 border-b">{{ reservation.date|date('d/m/Y H:i') }}</td>
+                <td class="py-2 px-4 border-b">{{ reservation.nbPersonne }}</td>
+                <td class="py-2 px-4 border-b">{{ reservation.isActive ? 'Active' : 'Annulée' }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('admin_dashboard') }}" class="mt-4 inline-block bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
+        Retour au Dashboard
+    </a>
+</div>
+{% endblock %}
+

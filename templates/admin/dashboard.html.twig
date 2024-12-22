@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard Admin{% endblock %}
+
+{% block body %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-6">Dashboard Admin</h1>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <a href="{{ path('admin_users') }}" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 px-6 rounded">
+            Gérer les Utilisateurs
+        </a>
+        <a href="{{ path('admin_restaurants') }}" class="bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-6 rounded">
+            Gérer les Restaurants
+        </a>
+        <a href="{{ path('admin_reservations') }}" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-4 px-6 rounded">
+            Voir les Réservations
+        </a>
+    </div>
+</div>
+{% endblock %}
+
