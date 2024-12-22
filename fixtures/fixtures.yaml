@@ -8,6 +8,58 @@ App\Entity\User:
     country: "France"
     address: <address()>
     zipCode: <postcode()>
-    isActive: true
+    isActive: <boolean()>
     isNewsletter: <boolean()>
     resetToken: ~
+
+App\Entity\Restaurant:
+  restaurant_{1..20}:
+    name: <company()>
+    email: <companyEmail()>
+    phone: <numerify('01########')>
+    country: "France"
+    address: <address()>
+    zipCode: <postcode()>
+    horaires: []
+    owner: "@user_<numberBetween(1, 100)>"
+
+App\Entity\Table:
+  table_{1..100}:
+    plan: "@plan_<numberBetween(1, 20)>"
+    positionX: <numberBetween(0, 100)>
+    positionY: <numberBetween(0, 100)>
+    isActive: <boolean()>
+    nbPersonneMax: <numberBetween(2, 10)>
+    tableNumber: <numerify('T###')>
+
+App\Entity\Reservation:
+  reservation_{1..200}:
+    restaurant: "@restaurant_<numberBetween(1, 18)>"
+    date: <dateTimeBetween('-1 year', '+1 day')>
+    nbPersonne: <numberBetween(1, 6)>
+    commentary: "<boolean()> ? <text(200)> : null"
+    isActive: <boolean()>
+    user: "@user_<numberBetween(1, 100)>"
+
+App\Entity\Menu:
+  menu_{1..50}:
+    name: <word()>
+    restaurant: "@restaurant_<numberBetween(1, 20)>"
+    isActive: <boolean()>
+
+App\Entity\Plat:
+  plat_{1..200}:
+    libelle: <word()>
+    menu: "@menu_<numberBetween(1, 50)>"
+
+App\Entity\Plan:
+  plan_{1..20}:
+    name: <word()>
+    isActive: <boolean()>
+    restaurant: "@restaurant_<numberBetween(1, 20)>"
+
+App\Entity\Wallpoint:
+  wallpoint_{1..100}:
+    plan: "@plan_<numberBetween(1, 20)>"
+    positionX: <numberBetween(0, 100)>
+    positionY: <numberBetween(0, 100)>
