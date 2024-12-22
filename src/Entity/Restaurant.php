@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\RestaurantRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: RestaurantRepository::class)]
@@ -60,6 +61,12 @@ class Restaurant
 
     #[ORM\Column]
     private ?bool $isActive = true;
+
+    #[ORM\Column(type: Types::TEXT)]
+    private ?string $shortSummary = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $longSummary = null;
 
     public function __construct()
     {
@@ -266,6 +273,30 @@ class Restaurant
     public function setIsActive(bool $isActive): static
     {
         $this->isActive = $isActive;
+
+        return $this;
+    }
+
+    public function getShortSummary(): ?string
+    {
+        return $this->shortSummary;
+    }
+
+    public function setShortSummary(string $shortSummary): static
+    {
+        $this->shortSummary = $shortSummary;
+
+        return $this;
+    }
+
+    public function getLongSummary(): ?string
+    {
+        return $this->longSummary;
+    }
+
+    public function setLongSummary(?string $longSummary): static
+    {
+        $this->longSummary = $longSummary;
 
         return $this;
     }

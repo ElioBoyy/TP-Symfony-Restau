@@ -23,5 +23,8 @@ services:
   App\DataFixtures\Providers\HashPasswordProvider:
     tags: [{ name: nelmio_alice.faker.provider }]
 
+  App\Twig\AppExtension:
+    tags: ["twig.extension"]
+
   # add more service definitions when explicit configuration is needed
   # please note that last definitions always *replace* previous ones
