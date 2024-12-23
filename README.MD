@@ -32,10 +32,15 @@ Il manque quelques fonctionnalités.
    ```bash
    cd TP-Restaurant
    composer install
-   npm i
-   npm run watch
    docker compose up -d
    ```
+2.bis Vous aurez peut être besoin de lancer ce script :
+   ```bash
+   npm i
+   npm run watch
+   ```
+   npm i
+   npm run watch
 3. Configurez la base de données dans le fichier `.env` :
    ```env
    inclus
