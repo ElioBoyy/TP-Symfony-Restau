@@ -32,6 +32,9 @@ Il manque quelques fonctionnalités.
    ```bash
    cd TP-Restaurant
    composer install
+   npm i
+   npm run watch
+   docker compose up -d
    ```
 3. Configurez la base de données dans le fichier `.env` :
    ```env
@@ -42,11 +45,11 @@ Il manque quelques fonctionnalités.
    php bin/console doctrine:database:create
    php bin/console doctrine:migrations:migrate
    ```
-   Créez les fixtures
+5. Créez les fixtures
    ```bash
    php bin/console h:f:l
    ```
-5. Démarrez le serveur Symfony :
+6. Démarrez le serveur Symfony :
    ```bash
    symfony server:start
    ```
